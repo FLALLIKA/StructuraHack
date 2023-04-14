@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/emailInput"
         android:layout_marginHorizontal="40sp"
-        android:layout_marginTop="40sp"
+        android:layout_marginTop="20sp"
         android:hint="@string/password"
         android:minHeight="48dp"/>
 
@@ -51,11 +51,13 @@
         tools:ignore="TouchTargetSizeCheck"/>
 
     <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/gonext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/resetpass"
         android:layout_marginHorizontal="40sp"
         android:layout_marginTop="20sp"
         android:background="@drawable/button_style"
-        tools:ignore="SpeakableTextPresentCheck" />
+        tools:ignore="SpeakableTextPresentCheck"
+        android:text="@string/gofunc"/>
 </RelativeLayout>

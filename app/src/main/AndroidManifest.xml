@@ -12,6 +12,9 @@
         android:theme="@style/Theme.BusinessCard"
         tools:targetApi="31">
         <activity
+            android:name=".Cabinet"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -21,5 +24,6 @@
             </intent-filter>
         </activity>
     </application>
+    <uses-permission android:name="android.permission.NFC" />
 
 </manifest>

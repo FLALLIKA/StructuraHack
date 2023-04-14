@@ -3,4 +3,7 @@
     <string name="email">Адрес почты</string>
     <string name="password">Пароль</string>
     <string name="forgot">Забыли пароль?</string>
+    <string name="gofunc">Войти</string>
+    <string name="sharenfc">Поделиться через NFC</string>
+    <string name="incorrectlink">Неверный формат ссылки</string>
 </resources>
