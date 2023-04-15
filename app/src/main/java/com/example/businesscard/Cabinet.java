@@ -4,9 +4,12 @@ import static com.example.businesscard.R.string.incorrectlink;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Application;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.nfc.NdefMessage;
@@ -17,7 +20,9 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,12 +32,23 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 
 public class Cabinet extends AppCompatActivity {
     private ImageView qrCodeImageView;
     private Button turnOnNFC;
     private Button shareVia;
+    private Button saveQr;
+    private ImageButton showShare;
+    private RelativeLayout linksvisit;
+    private ImageButton showmy;
+    private RelativeLayout mycard;
+    private Context context;
     public static String link = "http://u147316.test-handyhost.ru/";
+    public Bitmap bitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) { //при запуске активити лепится qr, пока что со статичной ссылкой, ибо на динамику нет нитиво)))
@@ -41,13 +57,19 @@ public class Cabinet extends AppCompatActivity {
         qrCodeImageView = findViewById(R.id.qrimg);
         turnOnNFC = findViewById(R.id.nfc);
         shareVia = findViewById(R.id.share);
+        saveQr = findViewById(R.id.saveqr);
+        context = getApplicationContext();
+        showShare = findViewById(R.id.showshare);
+        linksvisit = findViewById(R.id.linksvisit);
+        showmy = findViewById(R.id.showmy);
+        mycard = findViewById(R.id.mycard);
 
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         try {
             BitMatrix bitMatrix = qrCodeWriter.encode(link, BarcodeFormat.QR_CODE, 512, 512);
             int width = bitMatrix.getWidth();
             int height = bitMatrix.getHeight();
-            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+            bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
 
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
@@ -59,6 +81,42 @@ public class Cabinet extends AppCompatActivity {
         } catch (WriterException e) {
             e.printStackTrace();
         }
+
+        showShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                linksvisit.setVisibility(View.VISIBLE);
+                mycard.setVisibility(View.GONE);
+            }
+        });
+
+        showmy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                linksvisit.setVisibility(View.GONE);
+                mycard.setVisibility(View.VISIBLE);
+            }
+        });
+
+        saveQr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                File dir = new File(context.getFilesDir(), "qr_codes");
+                if (!dir.exists()) {
+                    dir.mkdirs(); // создаем каталог, если он еще не существует
+                }
+                File file = new File(dir, "my_qr_code.png");
+
+                // Сохраняем Bitmap в виде PNG-изображения в указанном пути
+                try (FileOutputStream out = new FileOutputStream(file)) {
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+                } catch (IOException e) {
+                    e.printStackTrace();
+
+                }
+            }
+        });
+
         turnOnNFC.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -91,7 +149,7 @@ public class Cabinet extends AppCompatActivity {
 
         shareVia.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view) { // шарит визитку через диалоговое окно
                 // Создаем новый Intent с ACTION_SEND
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
@@ -102,7 +160,6 @@ public class Cabinet extends AppCompatActivity {
 
                 // Запускаем активность выбора для отправки сообщения
                 startActivity(Intent.createChooser(shareIntent, "Поделиться через"));
-
             }
         });
 
