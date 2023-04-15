@@ -31,6 +31,7 @@ import com.google.zxing.qrcode.QRCodeWriter;
 public class Cabinet extends AppCompatActivity {
     private ImageView qrCodeImageView;
     private Button turnOnNFC;
+    private Button shareVia;
     public static String link = "http://u147316.test-handyhost.ru/";
 
     @Override
@@ -39,6 +40,7 @@ public class Cabinet extends AppCompatActivity {
         setContentView(R.layout.activity_cabinet);
         qrCodeImageView = findViewById(R.id.qrimg);
         turnOnNFC = findViewById(R.id.nfc);
+        shareVia = findViewById(R.id.share);
 
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         try {
@@ -84,6 +86,23 @@ public class Cabinet extends AppCompatActivity {
 
                 // Выводим сообщение о готовности передачи
                 Toast.makeText(Cabinet.this, "Ready to send link via NFC", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        shareVia.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Создаем новый Intent с ACTION_SEND
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+
+                // Добавляем ссылку в текст сообщения
+                String shareMessage = "Моя визитка: " + link;
+                shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
+
+                // Запускаем активность выбора для отправки сообщения
+                startActivity(Intent.createChooser(shareIntent, "Поделиться через"));
+
             }
         });
 
